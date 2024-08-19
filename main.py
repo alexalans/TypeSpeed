@@ -20,6 +20,7 @@ class Word:
 def show_result():
     words_correct = 0
     words_wrong = 0
+    word_entry.config(state="disabled")
     for word in word_objects_list:
         if word.color == "green":
             words_correct += 1
@@ -31,10 +32,12 @@ def show_result():
         messagebox.showinfo(title="Your Speed Test Results",
                             message=f"Hey, you didn't even try doing the test!"
                                     f"Come on, I know you can do better than that.")
+
     else:
         messagebox.showinfo(title="Your Speed Test Results",
                             message=f"Words per minute: {words_correct}\n"
                                     f"Typing accuracy: {accuracy}%\n")
+
 
 
 def timer(seconds):
@@ -44,7 +47,6 @@ def timer(seconds):
     if seconds <= 0:
         window.after_cancel(countdown)
         type_this.config(text="Your result:")
-        restart_test()
         show_result()
 
 
@@ -56,7 +58,9 @@ def restart_test():
         window.focus_set()
         global words_sent
         words_sent = 0
+        word_entry.config(state="normal")
         word_entry.insert(0, "Press 'S' to start!")
+        word_entry.config(state="disabled")
         window.bind("s", start_test)
         window.bind("S", start_test)
         time.config(text=f"Time left:")
@@ -99,6 +103,7 @@ def submit_word(event):
 
 
 def start_test(event):
+    word_entry.config(state="normal")
     window.unbind("s")
     window.unbind("S")
     word_entry.focus_set()
@@ -142,7 +147,7 @@ def load_text():
     return word_objects_list
 
 
-text_to_type = Text(height=10, wrap="word", font=("Arial", 13), padx=10, pady=10)
+text_to_type = Text(height=10, width=60, wrap="word", font=("Arial", 13), padx=10, pady=10)
 text_to_type.config(state=NORMAL)
 text_to_type.insert("end", "Welcome to TypeSpeed! \n\n"
                            "This program will measure your typing speed in words per minute. \n"
@@ -163,6 +168,7 @@ type_here.grid(column=1, row=5, sticky=W + E)
 word_entry = Entry(width=25, font=("Arial", 13))
 word_entry.bind("<space>", submit_word)
 word_entry.insert(0, "Press 'S' to start!")
+word_entry.config(state="disabled")
 word_entry.grid(column=1, row=6, columnspan=3, pady=5, sticky=W + E)
 
 restart = Button(text="Restart", command=restart_test)
